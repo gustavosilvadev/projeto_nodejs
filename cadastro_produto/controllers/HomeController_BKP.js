@@ -4,6 +4,7 @@ class HomeController{
 
 	async index(req, res){
 		// res.send("<body style='display: flex; justify-content: center;'><div style='text-align: center'><h1>-- SPORTAL --</h1></div></body>")
+		// res.render("Home", { csrfToken: req.csrfToken() });
 		res.render("Home");
 
 	}

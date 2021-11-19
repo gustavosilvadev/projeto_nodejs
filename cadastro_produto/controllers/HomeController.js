@@ -1,98 +1,110 @@
-const Ocorrencias = require("../models/Ocorrencias")
+const Produtos = require("../models/Produtos")
 
 class HomeController{
 
 	async index(req, res){
-		// res.send("<body style='display: flex; justify-content: center;'><div style='text-align: center'><h1>-- SPORTAL --</h1></div></body>")
-		res.render("Home");
+
+        let dataResult = await Produtos.selecionarProdutos();
+    
+        if(dataResult != undefined){
+            res.statusCode = 200;
+            res.render("Home", {dadosProdutos: dataResult});
+    
+        }else{
+    
+            res.status(404).json({status:404, message:"Dados não encontrado"});;
+        }
 
 	}
 
-	async listEvent(req, res){
+    async cadastrarProduto(req, res){
 
-		let dataResult = await Ocorrencias.findReports();
+        let dataResult = await Produtos.salvarProduto(req.body);
+        
 
-		if(dataResult != undefined){
-			res.statusCode = 200;
-			res.send(dataResult);
+        if(dataResult != undefined){
 
-		}else{
+            res.statusCode = 200;
+            res.render("Home");
+    
+        }else{
+    
+            res.status(406).json({status:406, message:"Dados não cadastrados"});;
+        }
 
-			res.status(404).json({status:404, message:"Dados não encontrado"});;
-		}
-	}
 
-	async listTableCad(req, res){
-		let dataResult =  await Ocorrencias.findCadTables();
+        res.render("Home");
 
-		if(dataResult !== undefined || dataResult.length > 0){
-			res.statusCode = 200;
-			res.send(dataResult);
+    }    
 
-		}else{
+    async buscarProdutos(req, res){
 
-			res.status(404).json({status:404, message:"Dados não encontrado"});;
-		}
-	}
+        let dataResult = await Produtos.selecionarProdutos();
+    
+        if(dataResult != undefined){
+            res.statusCode = 200;
+            res.send(dataResult);
+    
+        }else{
+    
+            res.status(404).json({status:404, message:"Dados não encontrado"});;
+        }
+    }
 
-	async listTableRep(req, res){
-		let dataResult = await Ocorrencias.findReportingTables();
+    async buscarProduto(req, res){
 
-		if(dataResult !== undefined || dataResult.length > 0){
-			res.statusCode = 200;
-			res.send(dataResult);
-		
-		}else{
-		
-			res.status(404).json({status:404, message:"Dados não encontrado"});;
-		}
-	}
+        let idProduto = req.params.id;
 
-	async listColumnRep(req, res){
-		let table = req.body.table;
 
-		if(table){
+        let dataResult = await Produtos.selecionarProduto(idProduto);
+    
 
-			let dataResult = await Ocorrencias.findReportingColumnsTable(table);
-			
-			if(dataResult !== undefined || dataResult.length > 0){
-				res.statusCode = 200;
-				res.send(dataResult);
-			
-			}else{
+        if(dataResult != undefined){
+            res.statusCode = 200;
+            res.send(dataResult);
+    
+        }else{
+    
+            res.status(404).json({status:404, message:"Dados não encontrado"});;
+        }
+    }
+    
+    async alterarProduto(req, res){
+        let dataResult = await Produtos.atualizarProduto(req.body);
 
-				res.status(404).json({status:404, message:"Dados não encontrado"});;				
-			}
-		}else{
 
-			res.status(400).json({status:400, message:"Nome da tabela inválida"});;			
-		}							   
-	}
-	
-	async showRelatedTables(req, res){
-		let tables_rel  = req.body.tables_rel;
+        if(dataResult != undefined){
 
-		if(tables_rel){
-			let dataResult = await Ocorrencias.getDataRelated(tables_rel);
-			if(dataResult != undefined){
-				res.status = 200;
-				res.json(dataResult);
+            res.statusCode = 200;
+            res.render("Home");
+    
+        }else{
+    
+            res.status(406).json({status:406, message:"Dados não atualizados"});;
+        }
 
-			}else{
+    }
 
-				// res.status = 404;
-				// res.sendStatus(404);
-				res.status(404).json({status:404, message:"Dados não encontrado"});;
+    async removerProduto(req, res){
+        let idProduto = req.params.id;
+        let dataResult = await Produtos.deletarProduto(idProduto);
 
-			}
-			
-		}else{
-			res.status = 400;
-			res.json({status: 400, message: "Dados inválido"});
-		}
+        if(dataResult != undefined){
+            
+            res.statusCode = 200;
+            res.render("Home");
+    
+        }else{
+    
+            res.status(406).json({status:406, message:"Dados não deletados"});;
+        }
 
-	}
 
+        // res.redirect("/");
+        console.log("Dados de retorno: " + dataResult);
+        res.send(dataResult);
+
+    }
 }
 
 module.exports = new HomeController();

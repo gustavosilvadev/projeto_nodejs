@@ -1,11 +1,43 @@
+/*
 const firstdb = require("../database/firstdatabase");
 const seconddb = require("../database/seconddatabase");
+*/
+const firstdb = require("../database/databaseprimeiro");
 
 class Ocorrencias{
 
-    async findReports(){
+
+
+
+	async salvarProduto($dada){
+		
 		let result = undefined;
-		await seconddb.select("*").table("REPORTING.FTO_EVENT").where({sk_event: 6989}).then(data => {
+
+		firstdb('produtos').insert({
+				descricao: $dada.descricao, 
+				preco: $dada.preco,
+				tipo_embalagem: $dada.tipo_embalagem,
+				quantidade_embalagem: $dada.quantidade_embalagem,
+				peso: $dada.peso
+		
+		}).then(data => {
+			result = data;
+
+			console.log("Produto Cadastrado com sucesso!");
+			console.log("\n *********");
+			console.log(result);
+			console.log("\n *********");
+
+		});
+
+
+		return result;
+	}
+
+    async selecionarProdutos(){
+
+		let result = undefined;
+		await firstdb.select("*").table("db_mtrix.produtos").then(data => {
  			result = data;
 
 		}).catch(error => {
@@ -13,11 +45,60 @@ class Ocorrencias{
 			result = error;
 		});
 
-		// console.log("Teste fora do escopo da consulta SQL");
 
+		console.log("Teste fora do escopo da consulta SQL");
 		return result;
 	
+	}	
+
+
+	async atualizarProduto($dada){
+		
+		let result = undefined;
+
+		firstdb('produtos').where({id: $dada.id}).update({
+				descricao: $dada.descricao, 
+				preco: $dada.preco,
+				tipo_embalagem: $dada.tipo_embalagem,
+				quantidade_embalagem: $dada.quantidade_embalagem,
+				peso: $dada.peso
+		
+		}).then(data => {
+			result = data;
+
+			console.log("Produto atualizado com sucesso!");
+			console.log("\n *********");
+			console.log(result);
+			console.log("\n *********");
+
+		});
+
+
+		return result;
 	}
+
+
+
+	async deletarProduto($id){
+		
+		let result = undefined;
+
+		firstdb('produtos').where({id: $id}).del().then(data => {
+			result = data;
+
+			console.log("Produto deletado com sucesso!");
+			console.log("\n *********");
+			console.log(result);
+			console.log("\n *********");
+			
+			success(200);
+
+		}).catch(fail);
+
+
+		return result;
+	}	
+
 
 	async findCadTables(){
 

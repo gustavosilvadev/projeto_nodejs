@@ -1,10 +1,10 @@
 let knexDB = require('knex')({
-    client:'mssql',
+    client:'mysql',
     connection: {
-        host:'172.16.221.20\\CADDB',
-        user:'reporting',
-        password:'reporting',
-        database:'REPORTING',
+        host:'localhost',
+        user:'root',
+        password:'',
+        database:'db_mtrix',
         "options":{
             "encrypt": true,
             "enableArithAbort": true

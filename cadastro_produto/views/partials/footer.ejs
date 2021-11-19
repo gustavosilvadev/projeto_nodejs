@@ -1,5 +1,112 @@
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="/js/bootstrap.min.js"></script>
+
+<script>
+
+
+  jQuery(document).ready(function($){
+    $('#editItemModal').on('show.bs.modal', function(e) {
+
+      $('.modalTextInput').val('');
+
+      let btn = $(e.relatedTarget); 
+      let id  = btn.data('id'); 
+      $('.saveEdit').data('id', id);
+
+      obterDados(id);
+    });
+
+
+    $('#deleteItemModal').on('show.bs.modal', function(e) {
+
+        $('.modalTextInput').val('');
+
+        let btn = $(e.relatedTarget); 
+        let id  = btn.data('id'); 
+        $('.saveEdit').data('id', id);
+
+        deletarDados(id);
+    });
+
+
+    $('.saveEdit').on('click', function() {
+      let id = $(this).data('id');
+      saveNote(id);
+      $('#editItemModal').modal('toggle');
+    });
+
+
+    $("#atualizar").click(function(e){
+      e.preventDefault();  
+      let idProduto = 3;
+      atualizar(idProduto);
+    })
+
+
+  });
+
+  function obterDados(id){
+
+    $.get("/produto/"+id, function(data, status){
+
+      Object.keys(data).forEach((item) => {
+
+        $('#descricao_edit').val(data[item]['descricao']);
+        $('#preco_edit').val(data[item]['preco']);
+        $('#tipo_embalagem_edit').val(data[item]['tipo_embalagem']);
+        $('#quantidade_embalagem_edit').val(data[item]['quantidade_embalagem']);
+        $('#peso_edit').val(data[item]['peso']);
+
+      });
+
+
+    });
+
+  }
+
+  function atualizar(id){
+
+      $.ajax({
+          url: "/produto/" + id,
+          type: "GET",
+          beforeSend: function() {
+              //$("#" + formName).html(preloaderAzul);
+          },
+          success: function(response) {
+              // $("#" + formName).html(response);
+              console.log("Dados Retornados");
+          },
+      });
+
+  }
+
+
+  function deletarDados(id){
+
+    $.ajax({
+        url: "/deleta/" + id,
+        type: "DELETE",
+        success: function(response) {
+            alert(response);
+            document.location.reload(true);
+            // console.log("Dados Retornados");
+        },
+    });
+
+  }
+
+
+  function saveNote(id) {
+    let text = $('.modalTextInput').val();
+    $('.recentNote').data('note', text);
+    console.log($('.recentNote').data('note'));
+    console.log(text + ' --> ' + id);
+  }
+
+
+
+</script>
+
 </body>
 </html>
